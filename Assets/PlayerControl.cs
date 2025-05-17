@@ -13,10 +13,6 @@ public class PlayerControl : MonoBehaviour
     #endregion
     // variables for AimAtMouse & LaunchControl
     #region
-    //Mouse Variables
-    private Vector3 mousePos;
-    private Vector2 mousePosStart, mousePosEnd;
-
     //Launch Variables
     [Header("Launch Settings")]
     [SerializeField] private float launchBase;
@@ -44,24 +40,18 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float gravitySwitchThreshold;
     private float regularGravity = 3f;
     #endregion
-    public void OnMouse(InputValue value)
-    {
-        mousePos = mainCam.ScreenToWorldPoint(value.Get<Vector2>());
-    }
-    public void OnAim(InputValue value)
+    public void OnJump(InputValue value)
     {
         float v = value.Get<float>();
         if (v == 1)
         {
+            Debug.Log("HOLD");
             aimed = true;
-            Debug.Log("CLICKED");
-            mousePosStart = mousePos;
         }
         else
         {
             Debug.Log("RELEASE");
-            mousePosEnd = mousePos;
-            launchControl();
+            //launchControl();
             aimed = false;
         }
     }
@@ -77,31 +67,20 @@ public class PlayerControl : MonoBehaviour
         Checks();
         if (!aimed)
         {
-            aimAtMouse();
+            aimCharacter();
         }
         jumpAffectors();
         wallJumps();
     }
-    void aimAtMouse()
+    void aimCharacter()
     {
-        Vector2 direction = mousePos - transform.position;
-        // only gives values 0-180 and 0 - -180
-        angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        // converts angle to full 360
-        float normalizedAngle = (angle + 360f) % 360f;
-        // provides the opposite of angle in full 360 
-        angleFlipped = 180 + angle;
-        /* TODO: limit angleMin - angle max to 20 -160
-            get the value of the reverse angles divided by the positive
-            when angle is in certain ranges add value so pivot rotates in opposite angle from mouse
-            check for walls and adjust angle range accordingly words*/
-        //Current Code to control and flip rotation depending on mouse position to ensure rotation remains between 0-180
-        if ((angle > angleMin) && (angle < angleMax))
-        {
-            pivot.transform.rotation = Quaternion.Euler(0f, 0f, angle);
-            isPositive = false;
-        }
-        else { Debug.Log("Out"); }
+        //Vector2 direction = mousePos - transform.position;
+        //// only gives values 0-180 and 0 - -180
+        //angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        //// converts angle to full 360
+        //float normalizedAngle = (angle + 360f) % 360f;
+        //// provides the opposite of angle in full 360 
+        //angleFlipped = angle - angleMax;
         //if ((angle < angleMin) || (angle > angleMax))
         //{
         //    pivot.transform.rotation = Quaternion.Euler(0f, 0f, angleFlipped);
@@ -125,7 +104,7 @@ public class PlayerControl : MonoBehaviour
             {
                 launchRot = Quaternion.AngleAxis(angleFlipped, Vector3.forward) * Vector3.right;
             }
-            launchForceVec = mousePosStart - mousePosEnd;
+            //launchForceVec = mousePosStart - mousePosEnd;
             launchForce = Mathf.Clamp(Math.Abs(launchForceVec.sqrMagnitude) * launchBase, 0, maxLaunchForce);
             launchDirection = new Vector2(launchRot.x, Mathf.Abs(launchRot.y));
             rb.AddForce(launchDirection * launchForce, ForceMode2D.Impulse);
