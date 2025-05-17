@@ -94,7 +94,7 @@ public class PlayerControl : MonoBehaviour
         /* TODO: limit angleMin - angle max to 20 -160
             get the value of the reverse angles divided by the positive
             when angle is in certain ranges add value so pivot rotates in opposite angle from mouse
-            check for walls and adjust angle range accordingly*/
+            check for walls and adjust angle range accordingly words*/
         //Current Code to control and flip rotation depending on mouse position to ensure rotation remains between 0-180
         if ((angle > angleMin) && (angle < angleMax))
         {
