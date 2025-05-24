@@ -17,20 +17,28 @@ public class PlayerInputs : MonoBehaviour
     }
     void OnJump(InputValue value) {
         jumpInput = value.Get<float>();
-        playerController.Jump(playerChecks.isGrounded);
         if (jumpInput == 1)
         {
             Debug.Log("HOLD");
+            playerController.MoveDirection();
+            playerController.Jump(playerChecks.isGrounded, playerChecks.canJump);
+            if (playerChecks.canDash && !playerChecks.isGrounded) {
+                playerController.AirDash(playerChecks.isGrounded);
+                playerChecks.canDash = false;
+            }
             holdingJump = true;
         }
         else
         {
             Debug.Log("RELEASE");
+            
             holdingJump = false;
         }
     }
     private void Update()
     {
         playerController.AimCharacter(aimInput);
+        playerController.JumpCut(playerChecks.isGrounded, holdingJump);
+        playerController.WallSlide(playerChecks.onLeftWall, playerChecks.onRightWall,playerChecks.isGrounded);
     }
 }
